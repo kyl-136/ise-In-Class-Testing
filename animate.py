@@ -11,6 +11,7 @@ animation_choice = st.selectbox(
     [
         "Rotating 3D Helix",
         "Moving Sine Wave",
+        "Moving Cosine Wave",
         "Bouncing Ball",
     ],
 )
@@ -104,6 +105,75 @@ def moving_sine_wave():
     frames = []
     for i in range(num_frames):
         phase = 2 * np.pi * i / num_frames
+        y = np.cos(x + phase)
+
+        frames.append(
+            go.Frame(
+                data=[
+                    go.Scatter(
+                        x=x,
+                        y=y,
+                        mode="lines",
+                    )
+                ],
+                name=str(i),
+            )
+        )
+
+    fig = go.Figure(
+        data=[
+            go.Scatter(
+                x=x,
+                y=np.cos(x),
+                mode="lines",
+            )
+        ],
+        frames=frames,
+    )
+
+    fig.update_layout(
+        title="Moving Sine Wave",
+        xaxis=dict(range=[0, 4 * np.pi]),
+        yaxis=dict(range=[-1.5, 1.5]),
+        updatemenus=[
+            {
+                "type": "buttons",
+                "buttons": [
+                    {
+                        "label": "Play",
+                        "method": "animate",
+                        "args": [
+                            None,
+                            {
+                                "frame": {"duration": 50, "redraw": True},
+                                "fromcurrent": True,
+                            },
+                        ],
+                    },
+                    {
+                        "label": "Pause",
+                        "method": "animate",
+                        "args": [
+                            [None],
+                            {
+                                "frame": {"duration": 0, "redraw": False},
+                                "mode": "immediate",
+                            },
+                        ],
+                    },
+                ],
+            }
+        ],
+        margin=dict(l=0, r=0, t=50, b=0),
+    )
+    return fig
+
+def moving_cos_wave():
+    x = np.linspace(0, 4 * np.pi, 300)
+
+    frames = []
+    for i in range(num_frames):
+        phase = 2 * np.pi * i / num_frames
         y = np.sin(x + phase)
 
         frames.append(
@@ -131,7 +201,7 @@ def moving_sine_wave():
     )
 
     fig.update_layout(
-        title="Moving Sine Wave",
+        title="Moving Cosine Wave",
         xaxis=dict(range=[0, 4 * np.pi]),
         yaxis=dict(range=[-1.5, 1.5]),
         updatemenus=[
@@ -242,6 +312,8 @@ if animation_choice == "Rotating 3D Helix":
     fig = rotating_3d_helix()
 elif animation_choice == "Moving Sine Wave":
     fig = moving_sine_wave()
+elif animation_choice == "Moving Cosine Wave":
+    fig = moving_cos_wave()
 else:
     fig = bouncing_ball()
 
